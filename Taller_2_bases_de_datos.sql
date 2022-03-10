@@ -111,11 +111,7 @@ VALUES('5', 'Gabriel Felipe Herrera Moreno');
 
 
 --Tablas Carrito y Producto registro
-INSERT INTO Carrito(Id_carrito)
-VALUES('1');
-INSERT INTO Producto(Id_producto,Nombre, Categoria, Marca, Stock, Descripcion, Precios, Id_carrito)
-VALUES('1', 'Jean Skinny Tiro Alto Mujer', 'Moda', 'Levis', '50', 'Jean ajustado tiro alto, bolsillos delanteros y posteriores, cierre y botón metálico. Efecto lavado.', '59.990', '1');
---
+
 INSERT INTO Carrito(Id_carrito)
 VALUES('2');
 INSERT INTO Producto(Id_producto,Nombre, Categoria, Marca, Stock, Descripcion, Precios, Id_carrito)
@@ -123,8 +119,6 @@ VALUES('2', 'Twister', 'Jugueteria', 'Hasbro', '100', 'Twister el Juego de equil
 --
 INSERT INTO Carrito(Id_carrito)
 VALUES('3');
-INSERT INTO Producto(Id_producto,Nombre, Categoria, Marca, Stock, Descripcion, Precios, Id_carrito)
-VALUES('3', 'Playstation 5 Ps5', 'Tecnologia', 'Sony', '20', 'Consola Sony Playstation 5 Ps5 825Gb Lector De Disco.', '3.589.900', '3');
 --
 INSERT INTO Carrito(Id_carrito)
 VALUES('4');
@@ -286,8 +280,7 @@ CREATE TABLE variante (
 --AUDITORIA DE VARIANTE
 
 CREATE TABLE variante_audit (
-	Nombre varchar(100) NOT NULL,
-	Fecha TIMESTAMP NOT NULL,
+	Nombre varchar(100),
 	Stock int,
 	Descripcion varchar(200),
 	Id_producto int,
@@ -297,16 +290,16 @@ CREATE TABLE variante_audit (
 CREATE OR REPLACE FUNCtiON trigger_variante_audit() RETURNS TRIGGER AS $$
 BEGIN
 		IF(TG_OP= 'INSERT' ) THEN
-				INSERT INTO variante_audit(Nombre,fecha,Stock,Descripcion,Id_producto)
-				VALUES ('I',now(),user, NEW.nombre);
+				INSERT INTO variante_audit
+				VALUES (new.Nombre,new.Stock,new.Descripcion,new.Id_producto);
 				RETURN NEW;
 		ELSEIF (TG_OP= 'UPDATE' ) THEN
-				INSERT INTO variante_audit(Nombre,fecha,Stock,Descripcion,Id_producto)
-				VALUES ('U',now(),user, NEW.nombre);
+				INSERT INTO variante_audit
+				VALUES (new.Nombre,new.Stock,new.Descripcion,new.Id_producto);
 				RETURN NEW;
 		ELSEIF (TG_OP= 'DELETE' ) THEN
-				INSERT INTO variante_audit(Nombre,fecha,Stock,Descripcion,Id_producto)
-				VALUES ('D',now(),user, OLD.nombre);
+				INSERT INTO variante_audit
+				VALUES (old.Nombre,old.Stock,old.Descripcion,old.Id_producto);
 				RETURN OLD;
 				
 		END IF;
@@ -321,7 +314,18 @@ CREATE TRIGGER trigger_variante_audit AFTER INSERT OR UPDATE OR DELETE ON varian
 FOR EACH ROW EXECUTE PROCEDURE trigger_variante_audit();
 
 INSERT INTO variante(Nombre,Stock, Descripcion,Id_producto)
-VALUES('Jean Skinny Tiro Alto Mujer','50', 'Jean ajustado tiro alto, bolsillos delanteros y posteriores, cierre y botón metálico. Efecto lavado.','10');
+VALUES('Jean Skinny Tiro Alto Mujer','50',
+	   'Jean ajustado tiro alto, bolsillos delanteros y posteriores, cierre y botón metálico. Efecto lavado.','5');
+	   
+UPDATE variante SET 
+Nombre = 'picaso',
+Stock = '5000',
+Descripcion = 'pieza de arte',
+Id_producto = '5';
+
+DELETE FROM variante 
+WHERE Nombre = 'picaso'
+
 --
 SELECT * FROM variante_audit;
 
@@ -345,16 +349,16 @@ CREATE TABLE producto_audit (
 CREATE OR REPLACE FUNCtiON trigger_producto_audit() RETURNS TRIGGER AS $$
 BEGIN
 		IF(TG_OP= 'INSERT' ) THEN
-				INSERT INTO profducto_audit(Id_producto,Nombre,Categoria,Marca,Stock,Descripcion,Precios,Id_carrito)
-				VALUES ('I',now(),user, NEW.nombre);
+				INSERT INTO profducto_audit
+				VALUES (new.Id_producto,new.Nombre,new.Categoria,new.Marca,new.Stock,new.Descripcion,new.Precios,new.Id_carrito);
 				RETURN NEW;
 		ELSEIF (TG_OP= 'UPDATE' ) THEN
-				INSERT INTO  profducto_audit(Id_producto,Nombre,Categoria,Marca,Stock,Descripcion,Precios,Id_carrito)
-				VALUES ('U',now(),user, NEW.nombre);
+				INSERT INTO  profducto_audit
+				VALUES (new.Id_producto,new.Nombre,new.Categoria,new.Marca,new.Stock,new.Descripcion,new.Precios,new.Id_carrito);
 				RETURN NEW;
 		ELSEIF (TG_OP= 'DELETE' ) THEN
-				INSERT INTO  profducto_audit(Id_producto,Nombre,Categoria,Marca,Stock,Descripcion,Precios,Id_carrito)
-				VALUES ('D',now(),user, OLD.nombre);
+				INSERT INTO  profducto_audit
+				VALUES (old.Id_producto,old.Nombre,old.Categoria,old.Marca,old.Stock,old.Descripcion,old.Precios,old.Id_carrito);
 				RETURN OLD;
 				
 		END IF;
@@ -365,17 +369,29 @@ $$LANGUAGE plpgsql;
 
 drop FUNcTION trigger_variante_audit;
 
-CREATE TRIGGER trigger_producto_audit AFTER INSERT OR UPDATE OR DELETE ON producto
+CREATE TRIGGER trigger_producto_audit AFTER INSERT OR UPDATE OR DELETE ON Producto
 FOR EACH ROW EXECUTE PROCEDURE trigger_producto_audit();
 
 INSERT INTO Carrito(Id_carrito)
-VALUES('6');
+VALUES('1');
 INSERT INTO Producto(Id_producto,Nombre, Categoria, Marca, Stock, Descripcion, Precios, Id_carrito)
-VALUES('13', 'Jean Skinny Tiro Alto Mujer', 'Moda', 'Levis', '50', 'Jean ajustado tiro alto, bolsillos delanteros y posteriores, cierre y botón metálico. Efecto lavado.', '59.990', '6');
---
+VALUES('1', 'Jean Skinny Tiro Alto Mujer', 'Moda', 'Levis', '50', 'Jean ajustado tiro alto, bolsillos delanteros y posteriores, cierre y botón metálico. Efecto lavado.', '59.990', '1');
+
+UPDATE Producto SET
+Id_producto = '100',
+Nombre = 'Playstation 5 Ps5',
+Categoria = 'Tecnologia',
+Marca = 'Sony',
+Stock = '20',
+Descripcion = 'Consola Sony Playstation 5 Ps5 825Gb Lector De Disco.',
+Precios = '3.589.900',
+Id_carrito = '3';
+
+DELETE FROM Producto 
+WHERE Nombre = 'Gimnasio para gatos castelli'
 
 Select * from producto_audit;
-SELECT * FROM PRODUCTO;
+SELECT * FROM Producto;
 
 
 
