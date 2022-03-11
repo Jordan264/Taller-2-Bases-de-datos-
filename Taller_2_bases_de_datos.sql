@@ -424,4 +424,47 @@ CREATE TABLE Orden_Producto(
 --Trigger punto 2
 
 
+--Punto 3 
+CREATE TABLE pruebas.Calificacion_producto (
 
+	
+	Id_comprador int,
+    Id_producto int,
+	calificacion int,
+	fecha_calificacion DATE,
+    FOREIGN KEY(Id_comprador)
+    REFERENCES Comprador(Id_comprador),
+    FOREIGN KEY(Id_producto) 
+    REFERENCES Producto(Id_producto)
+	
+	
+);
+
+
+CREATE TABLE pruebas.Calificacion_semanal (
+
+
+	Id_vendedor int,
+	calificacion_promedio int,
+    FOREIGN KEY(Id_vendedor)
+    REFERENCES Vendedor(Id_vendedor)
+	
+);
+
+
+
+DELIMITER $$
+
+CREATE PROCEDURE calcula_reputacion() 
+BEGIN
+
+UPDATE  pruebas.Calificacion_semanal
+SET calificacion_promedio = calPro
+FROM pruebas.Calificacion_semanal pc, (SELECT Id_vendedor, AVG(calificacion) calPro
+										FROM pruebas.Calificacion_producto, pruebas.producto, pruebas.vende
+										group by (Id_vendedor)) promedio
+WHERE pc.Id_vendedor=promedio.Id_vendedor;
+
+END$$
+
+DELIMITER ;
