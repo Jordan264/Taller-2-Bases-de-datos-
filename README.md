@@ -1,4 +1,4 @@
-# Taller_2_base_datos
+# Taller_2_bases_de_datos
 
 Integrantes: 
 Juan Felipe Organista Sanchez 
