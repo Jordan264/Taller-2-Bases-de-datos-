@@ -1,3 +1,5 @@
+--SQL Taller 1 creación de tablas del modelo relacional
+
 CREATE TABLE Administrador (
     Id_admin int PRIMARY KEY NOT NULL,
 	Nombre varchar(100)
@@ -97,6 +99,9 @@ CREATE TABLE Vende (
     REFERENCES Producto(Id_producto)
 );
 
+--Alimentación de las tablas creadas 
+
+
 --Tabla Administrador registro
 INSERT INTO Administrador(Id_admin,Nombre)
 VALUES('1', 'Juan Andres Parra Martinez');
@@ -116,15 +121,12 @@ INSERT INTO Carrito(Id_carrito)
 VALUES('2');
 INSERT INTO Producto(Id_producto,Nombre, Categoria, Marca, Stock, Descripcion, Precios, Id_carrito)
 VALUES('2', 'Twister', 'Jugueteria', 'Hasbro', '100', 'Twister el Juego de equilibrio y agilidad. Ideal para jugar en casa o al aire libre. 2 o más jugadores.', '79.000', '2');
---
 INSERT INTO Carrito(Id_carrito)
 VALUES('3');
---
 INSERT INTO Carrito(Id_carrito)
 VALUES('4');
 INSERT INTO Producto(Id_producto,Nombre, Categoria, Marca, Stock, Descripcion, Precios, Id_carrito)
 VALUES('4', 'Comedor 6 sillas', 'Hogar', 'M+DESIGN', '45', 'Comedor 6 sillas140x80x75 vidrio 2.0 M+Design.', '999.990', '4');
---
 INSERT INTO Carrito(Id_carrito)
 VALUES('5');
 INSERT INTO Producto(Id_producto,Nombre, Categoria, Marca, Stock, Descripcion, Precios, Id_carrito)
@@ -178,7 +180,9 @@ VALUES('2', 'En reparto', '9523571886');
 INSERT INTO Envio(Id_envio, Estado, Guia)
 VALUES('3', 'Devolucion', '1268459732');
 
-Select * from producto
+
+-- Un select para la tabla producto
+Select * from Producto
 where "precios" = '3.589.900'
 INSERT INTO Envio(Id_envio, Estado, Guia)
 VALUES('4', 'Entregado', '4587216932');
@@ -225,23 +229,21 @@ VALUES('4','1');
 INSERT INTO Vende(Id_vendedor, Id_producto)
 VALUES('5','3');
 
+
+--Creación de los indices 
 CREATE INDEX preciosProducto ON producto("precios")
-
 CREATE INDEX estadoPago ON compra("estado_de_pago")
-
 CREATE INDEX carritoid ON producto("id_carrito")
 
 Select * from producto
 where "precios" = '3.589.900'
-
 drop index preciosProducto
-
 drop index estadoPago
-
 drop index carritoid
  
  
- CREATE VIEW produc AS
+--Creación de las vistas
+CREATE VIEW produc AS
 SELECT
 
 FROM producto p
@@ -267,7 +269,16 @@ CREATE VIEW des_product
 drop view des_product
 select * from des_product
 
---Aqui comienza el taller 2 
+
+
+--Taller 2 - Continuando con el modelo planteado en el taller 1 se desarrollara en taller 2. 
+
+
+--
+--Primer punto
+--
+
+
 CREATE TABLE variante (
 	Nombre varchar(100), 
 	Stock int,
@@ -279,6 +290,7 @@ CREATE TABLE variante (
 
 --AUDITORIA DE VARIANTE
 
+
 CREATE TABLE variante_audit (
 	Nombre varchar(100),
 	Stock int,
@@ -287,6 +299,8 @@ CREATE TABLE variante_audit (
 	FOREIGN KEY(Id_producto)
 	REFERENCES producto(Id_producto)
 );
+
+--Trigger Primer punto 
 CREATE OR REPLACE FUNCtiON trigger_variante_audit() RETURNS TRIGGER AS $$
 BEGIN
 		IF(TG_OP= 'INSERT' ) THEN
@@ -392,6 +406,41 @@ WHERE Nombre = 'Gimnasio para gatos castelli'
 
 Select * from producto_audit;
 SELECT * FROM Producto;
+
+--
+--Segundo Punto
+--
+
+
+--Creacion de las tablas orden y orden_producto
+CREATE TABLE Orden_Compra (
+    Id_Orden_Compra int primary key NOT NULL,
+    Encabezado varchar (200),
+	Valor_a_pagar int,
+	Estado_orden varchar (100),
+	Id_carrito int,
+	FOREIGN KEY(Id_carrito)
+	REFERENCES Carrito(Id_carrito)
+);
+
+CREATE TABLE Orden_Producto(
+	Id_Orden_Compra int,
+    Id_carrito int,
+	Cantidad_Producto int,
+    FOREIGN KEY(Id_Orden_Compra)
+    REFERENCES Orden_Compra(Id_Orden_Compra),
+    FOREIGN KEY(Id_carrito) 
+    REFERENCES Carrito(Id_carrito)
+);
+
+
+--Trigger punto 2
+
+
+
+
+
+
 
 
 
