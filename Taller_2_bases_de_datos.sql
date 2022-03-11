@@ -394,7 +394,34 @@ WHERE Nombre = 'Gimnasio para gatos castelli'
 Select * from producto_audit;
 SELECT * FROM Producto;
 
+--
+--Segundo Punto
+--
 
+
+--Creacion de las tablas orden y orden_producto
+CREATE TABLE Orden_Compra (
+    Id_Orden_Compra int primary key NOT NULL,
+    Encabezado varchar (200),
+	Valor_a_pagar int,
+	Estado_orden varchar (100),
+	Id_carrito int,
+	FOREIGN KEY(Id_carrito)
+	REFERENCES Carrito(Id_carrito)
+);
+
+CREATE TABLE Orden_Producto(
+	Id_Orden_Compra int,
+    Id_carrito int,
+	Cantidad_Producto int,
+    FOREIGN KEY(Id_Orden_Compra)
+    REFERENCES Orden_Compra(Id_Orden_Compra),
+    FOREIGN KEY(Id_carrito) 
+    REFERENCES Carrito(Id_carrito)
+);
+
+
+--Trigger punto 2
 
 
 
