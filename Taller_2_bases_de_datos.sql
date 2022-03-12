@@ -398,7 +398,6 @@ SELECT * FROM Producto;
 --Segundo Punto
 --
 
-
 --Creacion de las tablas orden y orden_producto
 CREATE TABLE Orden_Compra (
     Id_Orden_Compra int primary key NOT NULL,
@@ -422,6 +421,33 @@ CREATE TABLE Orden_Producto(
 
 
 --Trigger punto 2
+
+--crear funcion que lance excepcion si la orden ya existe en el carrio */
+CREATE FUNCTION insertar_orden_compra(
+    Id_Orden_Compra int,
+    Encabezado varchar (200),
+    Valor_a_pagar int,
+    Estado_orden varchar (100),
+    Id_carrito int
+) RETURNS int
+AS $$
+BEGIN
+    INSERT INTO Orden_Compra(Id_Orden_Compra, Encabezado, Valor_a_pagar, Estado_orden, Id_carrito)
+    VALUES (Id_Orden_Compra, Encabezado, Valor_a_pagar, Estado_orden, Id_carrito);
+    RETURN Id_Orden_Compra;
+
+    EXCEPTION WHEN unique_violation THEN
+        RAISE NOTICE 'La orden ya existe en el carrito';
+        RETURN NULL;
+    END
+END;
+
+
+--crear trigger que ejecute la funcion instertar_orden_compra()/
+
+CREATE TRIGGER insertar_orden BEFORE INSERT ON bd_nana.order
+FOR EACH ROW
+EXECUTE insertar_orden_compra(NEW.id, NEW.encabezado, NEW.valor_a_pagar, NEW.estado_orden, NEW.shopping_card_id);
 
 
 --Punto 3 
